@@ -1,0 +1,6 @@
+{
+  "name": "SAPA - Sistem Aspirasi & Pengaduan Sarana Sekolah",
+  "description": "Aplikasi Pengaduan Sarana Sekolah (SAPA) untuk penyampaian aspirasi siswa, pemantauan riwayat status, dan pengelolaan respon fasilitas oleh administrator sekolah.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
