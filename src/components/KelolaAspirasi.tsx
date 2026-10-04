@@ -73,7 +73,7 @@ export const KelolaAspirasi: React.FC = () => {
 
   // CSV Export handler
   const handleExportCSV = () => {
-    const headers = ['ID', 'Tanggal', 'NIS', 'Nama Siswa', 'Kelas', 'Kategori', 'Lokasi', 'Status', 'Tanggapan Admin', 'Deskripsi'];
+    const headers = ['ID', 'Tanggal', 'ID/NIS', 'Nama Pelapor', 'Peran', 'Kategori', 'Lokasi', 'Status', 'Tanggapan Admin', 'Deskripsi'];
     const rows = filteredData.map((a) => [
       `"${a.id}"`,
       `"${a.tanggal}"`,
@@ -252,7 +252,7 @@ export const KelolaAspirasi: React.FC = () => {
             </span>
             <input
               className="w-full pl-10 pr-4 py-2 bg-surface rounded-xl border border-outline-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm text-on-surface placeholder:text-outline transition-all"
-              placeholder="Cari NIS, Nama, atau ID..."
+              placeholder="Cari ID/NIS, Nama Pelapor, atau ID..."
               type="text"
               value={searchTerm}
               onChange={(e) => {
@@ -431,7 +431,7 @@ export const KelolaAspirasi: React.FC = () => {
                               {item.nama_siswa}
                             </span>
                             <span className="text-[12px] text-on-surface-variant">
-                              NIS: {item.nis} • Kelas {item.kelas}
+                              ID/NIS: {item.nis} • Peran: {item.kelas}
                             </span>
                           </div>
                         </div>

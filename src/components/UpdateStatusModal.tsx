@@ -6,7 +6,8 @@ export const UpdateStatusModal: React.FC = () => {
   const {
     selectedAspirasiToEdit,
     setSelectedAspirasiToEdit,
-    updateAspirasiStatus,
+    updateAspirasi,
+    user,
   } = useApp();
 
   const [status, setStatus] = useState<StatusAspirasi>('Menunggu');
@@ -21,10 +22,18 @@ export const UpdateStatusModal: React.FC = () => {
           ? ''
           : selectedAspirasiToEdit.feedback
       );
+      // Lock body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
     }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [selectedAspirasiToEdit]);
 
-  if (!selectedAspirasiToEdit) return null;
+  if (!selectedAspirasiToEdit || user.role !== 'admin') return null;
 
   const item = selectedAspirasiToEdit;
 
@@ -33,7 +42,7 @@ export const UpdateStatusModal: React.FC = () => {
     setIsSaving(true);
 
     setTimeout(() => {
-      updateAspirasiStatus(
+      updateAspirasi(
         item.id,
         status,
         feedback.trim() || 'Laporan telah ditinjau dan diperbarui oleh admin fasilitas.'
@@ -52,7 +61,7 @@ export const UpdateStatusModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-surface-container-lowest rounded-3xl max-w-lg w-full p-lg sm:p-xl shadow-2xl border border-outline-variant/40 animate-in zoom-in-95 duration-200">
+      <div className="bg-surface-container-lowest rounded-3xl w-[90vw] md:w-[560px] lg:w-[600px] p-lg sm:p-xl shadow-2xl border border-outline-variant/40 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-md border-b border-outline-variant/30 mb-lg">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-on-primary-fixed">

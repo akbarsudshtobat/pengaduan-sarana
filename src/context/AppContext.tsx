@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ActiveTab, Aspirasi, StatusAspirasi, Siswa } from '../types';
-import { INITIAL_ASPIRASI, SISWA_LIST } from '../data/mockData';
+import { INITIAL_ASPIRASI, SISWA_LIST, USER_ACCOUNTS } from '../data/mockData';
 
 interface UserSession {
   isLoggedIn: boolean;
@@ -9,17 +9,17 @@ interface UserSession {
   roleTitle: string;
   adminId?: string;
   nis?: string;
+  email?: string;
 }
 
 interface AppContextType {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   user: UserSession;
-  loginAdmin: (id: string, pass: string) => boolean;
+  login: (email: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
-  switchToRole: (role: 'admin' | 'siswa') => void;
   aspirasiList: Aspirasi[];
-  addAspirasi: (data: { nis: string; kategori: string; lokasi: string; deskripsi: string; foto_url?: string }) => Aspirasi;
+  addAspirasi: (data: { id_pelapor: string; nama: string; peran: string; kategori: string; lokasi: string; deskripsi: string; foto_url?: string }) => Aspirasi;
   updateAspirasi: (id: string, status: StatusAspirasi, feedback: string) => void;
   deleteAspirasi: (id: string) => void;
   searchNisInput: string;
@@ -42,7 +42,17 @@ const STORAGE_KEY = 'sapa_sarana_aspirasi_list_v1';
 const USER_KEY = 'sapa_sarana_user_session_v1';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('kirim-aspirasi');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
+    try {
+      const savedUser = localStorage.getItem(USER_KEY);
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed.isLoggedIn && parsed.role === 'admin') return 'dashboard';
+        if (parsed.isLoggedIn && parsed.role === 'siswa') return 'kirim-aspirasi';
+      }
+    } catch { /* fallback */ }
+    return 'landing';
+  });
   const [students] = useState<Siswa[]>(SISWA_LIST);
 
   const [user, setUser] = useState<UserSession>(() => {
@@ -53,11 +63,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // fallback
     }
     return {
-      isLoggedIn: true,
-      role: 'admin',
-      name: 'Budi Darmawan',
-      roleTitle: 'Administrator',
-      adminId: 'ADM-001',
+      isLoggedIn: false,
+      role: 'siswa' as const,
+      name: 'Tamu',
+      roleTitle: 'Pengunjung',
     };
   });
 
@@ -106,26 +115,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addAspirasi = (data: {
-    nis: string;
+    id_pelapor: string;
+    nama: string;
+    peran: string;
     kategori: string;
     lokasi: string;
     deskripsi: string;
     foto_url?: string;
   }): Aspirasi => {
-    const student = registerOrGetStudent(data.nis);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const now = new Date();
     const dateStr = `${now.getDate().toString().padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
     
-    // Generate sequential ID like #RPT-090
     const randomNum = Math.floor(100 + Math.random() * 900);
     const newId = `#RPT-${randomNum}`;
 
     const newEntry: Aspirasi = {
       id: newId,
-      nis: data.nis,
-      nama_siswa: student.nama,
-      kelas: student.kelas,
+      nis: data.id_pelapor, // Backend field name 'nis' kept for exam ERD, but stores generic ID
+      nama_siswa: data.nama, // Backend field name 'nama_siswa' stores generic name
+      kelas: data.peran, // Backend field name 'kelas' stores generic role/title
       kategori: data.kategori || 'Fasilitas Umum',
       lokasi: data.lokasi,
       deskripsi: data.deskripsi,
@@ -162,52 +171,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast(`Laporan ${id} telah dihapus dari sistem.`, 'info');
   };
 
-  const loginAdmin = (id: string, _pass: string): boolean => {
-    if (!id || id.trim() === '') return false;
+  // Unified login: checks email+password against USER_ACCOUNTS
+  const login = (email: string, password: string): { success: boolean; error?: string } => {
+    const trimmedEmail = email.trim().toLowerCase();
+    const account = USER_ACCOUNTS.find(
+      (acc) => acc.email.toLowerCase() === trimmedEmail && acc.password === password
+    );
+
+    if (!account) {
+      return { success: false, error: 'Email atau password salah. Silakan coba lagi.' };
+    }
+
     setUser({
       isLoggedIn: true,
-      role: 'admin',
-      name: 'Budi Darmawan',
-      roleTitle: 'Administrator',
-      adminId: id.trim(),
+      role: account.role,
+      name: account.name,
+      roleTitle: account.title,
+      adminId: account.adminId,
+      nis: account.nis,
+      email: account.email,
     });
-    showToast('Login berhasil! Selamat datang di Portal Facility Admin.', 'success');
-    setActiveTab('kelola-aspirasi');
-    return true;
+
+    if (account.role === 'admin') {
+      setActiveTab('dashboard');
+      showToast(`Selamat datang, ${account.name}! Anda masuk sebagai Administrator.`, 'success');
+    } else {
+      setActiveTab('kirim-aspirasi');
+      showToast(`Selamat datang, ${account.name}!`, 'success');
+    }
+
+    return { success: true };
   };
 
   const logout = () => {
     setUser({
       isLoggedIn: false,
       role: 'siswa',
-      name: 'Pengguna Siswa',
-      roleTitle: 'Siswa / Tamu',
+      name: 'Tamu',
+      roleTitle: 'Pengunjung',
     });
-    setActiveTab('login');
-    showToast('Anda telah keluar dari sesi administrator.', 'info');
-  };
-
-  const switchToRole = (role: 'admin' | 'siswa') => {
-    if (role === 'admin') {
-      setUser({
-        isLoggedIn: true,
-        role: 'admin',
-        name: 'Budi Darmawan',
-        roleTitle: 'Administrator',
-        adminId: 'ADM-001',
-      });
-      setActiveTab('kelola-aspirasi');
-      showToast('Beralih ke mode Administrator.', 'info');
-    } else {
-      setUser({
-        isLoggedIn: false,
-        role: 'siswa',
-        name: 'Pengguna Siswa',
-        roleTitle: 'Siswa',
-      });
-      setActiveTab('kirim-aspirasi');
-      showToast('Beralih ke mode Siswa.', 'info');
-    }
+    setActiveTab('landing');
+    showToast('Anda telah keluar dari sesi.', 'info');
   };
 
   return (
@@ -216,9 +220,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeTab,
         setActiveTab,
         user,
-        loginAdmin,
+        login,
         logout,
-        switchToRole,
         aspirasiList,
         addAspirasi,
         updateAspirasi,

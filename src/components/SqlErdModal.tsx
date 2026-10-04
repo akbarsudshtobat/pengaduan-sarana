@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { SQL_SCHEMA_EXPORT } from '../data/mockData';
 
@@ -6,6 +6,17 @@ export const SqlErdModal: React.FC = () => {
   const { isSqlModalOpen, setIsSqlModalOpen, showToast } = useApp();
   const [activeTab, setActiveTab] = useState<'erd' | 'sql'>('erd');
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isSqlModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isSqlModalOpen]);
 
   if (!isSqlModalOpen) return null;
 

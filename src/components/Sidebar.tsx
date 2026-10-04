@@ -52,10 +52,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
 
         {/* Navigation items */}
         <nav className="flex-1 px-md space-y-xs overflow-y-auto">
-          {/* MENU UTAMA */}
-          <div className="px-md py-sm font-label-md text-label-md text-outline uppercase text-[12px] tracking-wider font-semibold">
-            Menu Utama
-          </div>
+          {user.role === 'admin' && (
+            <>
+              {/* MENU UTAMA (ADMIN) */}
+              <div className="px-md py-sm font-label-md text-label-md text-outline uppercase text-[12px] tracking-wider font-semibold">
+                Administrator
+              </div>
 
           <button
             type="button"
@@ -86,10 +88,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
             </span>
             <span className="font-label-md text-label-md">Kelola Aspirasi</span>
           </button>
+            </>
+          )}
 
-          {/* SISWA */}
+          {/* MENU PELAPOR */}
           <div className="px-md py-sm mt-lg font-label-md text-label-md text-outline uppercase text-[12px] tracking-wider font-semibold">
-            Siswa
+            Menu Pelapor
           </div>
 
           <button
@@ -141,42 +145,41 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onCloseMob
           </button>
         </nav>
 
-        {/* Footer Logout / Role Button */}
+        {/* Footer Role & Auth */}
         <div className="px-md pt-lg border-t border-outline-variant/60 space-y-sm">
           {user.isLoggedIn ? (
-            <button
-              type="button"
-              onClick={logout}
-              className="w-full flex items-center px-lg py-md rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-all gap-md text-left cursor-pointer"
-            >
-              <span className="material-symbols-outlined">logout</span>
-              <span className="font-label-md text-label-md font-medium">Keluar Sesi</span>
-            </button>
+            <>
+              {/* Role Status */}
+              <div className="px-lg py-2 rounded-xl bg-surface-container flex items-center justify-between text-[11px] text-on-surface-variant">
+                <span className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${user.role === 'admin' ? 'bg-emerald-500' : 'bg-blue-500'} animate-pulse`} />
+                  <span>Mode: <strong>{user.role === 'admin' ? 'Admin' : 'Siswa'}</strong></span>
+                </span>
+                <span className="text-on-surface font-semibold truncate max-w-[100px]">{user.name}</span>
+              </div>
+              {/* Logout */}
+              <button
+                type="button"
+                onClick={logout}
+                className="w-full flex items-center px-lg py-md rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-all gap-md text-left cursor-pointer"
+              >
+                <span className="material-symbols-outlined">logout</span>
+                <span className="font-label-md text-label-md font-medium">Keluar Sesi</span>
+              </button>
+            </>
           ) : (
-            <button
-              type="button"
-              onClick={() => handleNav('login')}
-              className="w-full flex items-center px-lg py-md rounded-lg text-primary hover:bg-surface-container-high transition-all gap-md text-left cursor-pointer font-semibold"
-            >
-              <span className="material-symbols-outlined">login</span>
-              <span className="font-label-md text-label-md">Login Admin</span>
-            </button>
+            <>
+              {/* Login */}
+              <button
+                type="button"
+                onClick={() => handleNav('login')}
+                className="w-full flex items-center px-lg py-md rounded-lg text-primary hover:bg-surface-container-high transition-all gap-md text-left cursor-pointer font-semibold"
+              >
+                <span className="material-symbols-outlined">login</span>
+                <span className="font-label-md text-label-md">Masuk / Login</span>
+              </button>
+            </>
           )}
-
-          {/* Role Status Pill */}
-          <div className="px-lg py-2 rounded-xl bg-surface-container flex items-center justify-between text-[11px] text-on-surface-variant">
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${user.role === 'admin' ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'}`} />
-              <span>Mode: <strong>{user.role === 'admin' ? 'Admin' : 'Siswa'}</strong></span>
-            </span>
-            <button
-              type="button"
-              onClick={() => handleNav(user.role === 'admin' ? 'kirim-aspirasi' : 'login')}
-              className="text-primary hover:underline font-semibold"
-            >
-              {user.role === 'admin' ? 'Ganti Siswa' : 'Masuk Admin'}
-            </button>
-          </div>
         </div>
       </aside>
     </>

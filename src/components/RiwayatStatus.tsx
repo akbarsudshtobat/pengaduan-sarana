@@ -50,13 +50,10 @@ export const RiwayatStatus: React.FC = () => {
     <div className="flex flex-col w-full gap-lg py-2">
       {/* Top Header & Search Bar */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-md gap-lg">
-        <div className="flex flex-col max-w-2xl">
-          <h1 className="font-headline-xl text-headline-xl text-on-surface mb-xs font-bold tracking-tight">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-800 tracking-tight">
             Riwayat &amp; Status Aspirasi
           </h1>
-          <p className="font-body-lg text-body-lg text-on-surface-variant text-sm sm:text-base">
-            Pantau status laporan dan aspirasi yang telah Anda ajukan. Masukkan Nomor Induk Siswa (NIS) untuk melihat riwayat lengkap.
-          </p>
         </div>
 
         {/* NIS Search Input */}
@@ -67,7 +64,7 @@ export const RiwayatStatus: React.FC = () => {
           <input
             className="w-full lg:w-80 pl-2xl pr-md py-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl shadow-xs border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-outline-variant text-sm"
             id="nisSearch"
-            placeholder="Masukkan NIS Anda..."
+            placeholder="Masukkan ID/NIS Anda..."
             type="text"
             value={searchNisInput}
             onChange={(e) => setSearchNisInput(e.target.value)}
@@ -87,7 +84,7 @@ export const RiwayatStatus: React.FC = () => {
       {/* Quick Filter Bar & NIS Chips */}
       <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-surface-container-low rounded-2xl border border-outline-variant/30">
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-on-surface-variant">
-          <span className="font-semibold text-on-surface">Pilih NIS Siswa:</span>
+          <span className="font-semibold text-on-surface">Pilih ID/NIS Pelapor:</span>
           {students.map((s) => (
             <button
               key={s.nis}
@@ -269,8 +266,8 @@ export const RiwayatStatus: React.FC = () => {
             </h3>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-md text-sm mb-lg">
               {searchNisInput
-                ? `Tidak ditemukan laporan aspirasi untuk kata kunci "${searchNisInput}". Pastikan NIS sudah sesuai.`
-                : 'Sepertinya belum ada laporan aspirasi yang terkait dengan NIS tersebut, atau Anda belum pernah mengajukan laporan.'}
+                ? `Tidak ditemukan laporan aspirasi untuk kata kunci "${searchNisInput}". Pastikan ID/NIS sudah sesuai.`
+                : 'Sepertinya belum ada laporan aspirasi yang terkait dengan ID/NIS tersebut, atau Anda belum pernah mengajukan laporan.'}
             </p>
             <button
               type="button"

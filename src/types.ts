@@ -39,4 +39,4 @@ export interface AdminUser {
   avatar?: string;
 }
 
-export type ActiveTab = 'dashboard' | 'kelola-aspirasi' | 'kirim-aspirasi' | 'riwayat-status' | 'login';
+export type ActiveTab = 'landing' | 'dashboard' | 'kelola-aspirasi' | 'kirim-aspirasi' | 'riwayat-status' | 'login';

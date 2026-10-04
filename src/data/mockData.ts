@@ -1,8 +1,30 @@
 import { Aspirasi, KategoriSarana, Siswa } from '../types';
 
+export interface UserAccount {
+  email: string;
+  password: string;
+  role: 'admin' | 'siswa';
+  name: string;
+  title: string;
+  nis?: string;
+  adminId?: string;
+}
+
+export const USER_ACCOUNTS: UserAccount[] = [
+  // Admin accounts
+  { email: 'admin@sapa.sch.id', password: 'admin123', role: 'admin', name: 'Budi Darmawan', title: 'Administrator', adminId: 'ADM-001' },
+  { email: 'kepala@sapa.sch.id', password: 'kepala123', role: 'admin', name: 'Suharto, S.Pd', title: 'Kepala Sarpras', adminId: 'ADM-002' },
+  // Siswa accounts
+  { email: 'ahmad@siswa.sch.id', password: 'siswa123', role: 'siswa', name: 'Ahmad Hidayat', title: 'Siswa Kelas XII IPA 2', nis: '10293' },
+  { email: 'siti@siswa.sch.id', password: 'siswa123', role: 'siswa', name: 'Siti Rahmawati', title: 'Siswa Kelas XI IPS 1', nis: '10455' },
+  { email: 'budi@siswa.sch.id', password: 'siswa123', role: 'siswa', name: 'Budi Kusuma', title: 'Siswa Kelas X MIPA 3', nis: '09882' },
+  // Non-Siswa accounts (Guru, Staf, Satpam) -> using 'siswa' role internally so they access the reporting form
+  { email: 'joko@sapa.sch.id', password: 'guru123', role: 'siswa', name: 'Pak Joko', title: 'Guru Olahraga', nis: 'GURU-001' },
+  { email: 'herman@sapa.sch.id', password: 'aman123', role: 'siswa', name: 'Herman', title: 'Satpam Sekolah', nis: 'STP-001' },
+];
+
 export const KATEGORI_LIST: KategoriSarana[] = [
   { id: 'fasilitas-kelas', nama: 'Fasilitas Kelas', icon: 'meeting_room', deskripsi: 'Meja, kursi, papan tulis, proyektor, AC kelas' },
-  { id: 'laboratorium', nama: 'Laboratorium', icon: 'biotech', deskripsi: 'Peralatan lab IPA, lab komputer, lab bahasa' },
   { id: 'kamar-mandi', nama: 'Kamar Mandi', icon: 'water_drop', deskripsi: 'Kran air, sanitasi, pintu toilet, kebersihan toilet' },
   { id: 'olahraga', nama: 'Olahraga', icon: 'sports_basketball', deskripsi: 'Lapangan basket, net voli, matras, peralatan olahraga' },
   { id: 'infrastruktur', nama: 'Infrastruktur IT', icon: 'wifi', deskripsi: 'Jaringan Wi-Fi, kabel LAN, router, server' },
@@ -23,6 +45,62 @@ export const SISWA_LIST: Siswa[] = [
 ];
 
 export const INITIAL_ASPIRASI: Aspirasi[] = [
+  {
+    id: '#RPT-101',
+    nis: '10118',
+    nama_siswa: 'Nadia Putri',
+    kelas: 'XII MIPA 1',
+    kategori: 'Fasilitas Kelas',
+    lokasi: 'Ruang Kelas XII MIPA 1',
+    deskripsi: 'Papan tulis whiteboard sudah banyak noda permanen yang tidak bisa dihapus, tulisan jadi susah terbaca dari bangku belakang.',
+    status: 'Menunggu',
+    feedback: '- Belum ada tanggapan -',
+    tanggal: '28 Sep 2026',
+    timestamp: 1695830400000 + 86400000 * 30,
+    urgensi: 'Sedang',
+  },
+  {
+    id: '#RPT-099',
+    nis: '10620',
+    nama_siswa: 'Dimas Anggara',
+    kelas: 'XI RPL 2',
+    kategori: 'Infrastruktur IT',
+    lokasi: 'Lab Komputer 1',
+    deskripsi: 'Mouse dan keyboard di 5 unit komputer sudah tidak berfungsi, menghambat praktikum pemrograman.',
+    status: 'Proses',
+    feedback: 'Pengadaan mouse dan keyboard baru sedang dalam proses pembelian oleh bagian sarpras.',
+    tanggal: '26 Sep 2026',
+    timestamp: 1695830400000 + 86400000 * 28,
+    urgensi: 'Tinggi',
+  },
+  {
+    id: '#RPT-096',
+    nis: '10512',
+    nama_siswa: 'Dewi Lestari',
+    kelas: 'XI AKL 2',
+    kategori: 'Fasilitas Umum',
+    lokasi: 'Kantin Sekolah',
+    deskripsi: 'Bangku kantin banyak yang patah kakinya, beberapa siswa terpaksa makan sambil berdiri.',
+    status: 'Menunggu',
+    feedback: '- Belum ada tanggapan -',
+    tanggal: '24 Sep 2026',
+    timestamp: 1695830400000 + 86400000 * 26,
+    urgensi: 'Sedang',
+  },
+  {
+    id: '#RPT-093',
+    nis: '09954',
+    nama_siswa: 'Muhammad Fadhil',
+    kelas: 'X TKJ 1',
+    kategori: 'Kebersihan',
+    lokasi: 'Koridor Gedung B Lt. 3',
+    deskripsi: 'Lampu koridor lantai 3 gedung B mati semua sehingga gelap saat sore hari, rawan kecelakaan siswa.',
+    status: 'Selesai',
+    feedback: 'Lampu neon sudah diganti dengan LED baru, 6 titik lampu sudah menyala normal. Terima kasih atas laporannya.',
+    tanggal: '22 Sep 2026',
+    timestamp: 1695830400000 + 86400000 * 24,
+    urgensi: 'Tinggi',
+  },
   {
     id: '#RPT-089',
     nis: '10293',
@@ -120,7 +198,49 @@ export const INITIAL_ASPIRASI: Aspirasi[] = [
     tanggal: '01 Okt 2023',
     timestamp: 1696122000000,
     urgensi: 'Sedang',
-  }
+  },
+  {
+    id: '#RPT-068',
+    nis: '10455',
+    nama_siswa: 'Siti Rahmawati',
+    kelas: 'XI IPS 1',
+    kategori: 'Kamar Mandi',
+    lokasi: 'Toilet Guru Lt. 1',
+    deskripsi: 'Pintu toilet tidak bisa dikunci dari dalam, engsel sudah longgar dan perlu diganti.',
+    status: 'Selesai',
+    feedback: 'Engsel dan kunci pintu sudah diganti baru oleh tukang. Pintu sudah berfungsi normal.',
+    tanggal: '28 Sep 2023',
+    timestamp: 1695862800000,
+    urgensi: 'Sedang',
+  },
+  {
+    id: '#RPT-065',
+    nis: '10620',
+    nama_siswa: 'Dimas Anggara',
+    kelas: 'XI RPL 2',
+    kategori: 'Olahraga',
+    lokasi: 'Ruang Ganti Olahraga',
+    deskripsi: 'Loker penyimpanan di ruang ganti banyak yang rusak, barang siswa sering hilang saat jam olahraga.',
+    status: 'Proses',
+    feedback: 'Sedang dilakukan pendataan loker yang rusak untuk pengadaan loker pengganti.',
+    tanggal: '25 Sep 2023',
+    timestamp: 1695603600000,
+    urgensi: 'Rendah',
+  },
+  {
+    id: '#RPT-061',
+    nis: '10118',
+    nama_siswa: 'Nadia Putri',
+    kelas: 'XII MIPA 1',
+    kategori: 'Fasilitas Kelas',
+    lokasi: 'Ruang Kelas XII MIPA 1',
+    deskripsi: 'Kursi di baris ketiga ada 3 unit yang sudah goyang dan berbahaya untuk diduduki.',
+    status: 'Selesai',
+    feedback: 'Kursi yang rusak sudah diperbaiki oleh tukang kayu dan sudah layak digunakan kembali.',
+    tanggal: '20 Sep 2023',
+    timestamp: 1695171600000,
+    urgensi: 'Tinggi',
+  },
 ];
 
 export const SQL_SCHEMA_EXPORT = `-- =========================================================

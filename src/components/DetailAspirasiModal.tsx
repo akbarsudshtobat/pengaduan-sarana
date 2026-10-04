@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
 export const DetailAspirasiModal: React.FC = () => {
@@ -9,6 +9,20 @@ export const DetailAspirasiModal: React.FC = () => {
     deleteAspirasi,
     user,
   } = useApp();
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedAspirasiDetail) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedAspirasiDetail]);
 
   if (!selectedAspirasiDetail) return null;
 
@@ -25,7 +39,7 @@ export const DetailAspirasiModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-surface-container-lowest rounded-3xl max-w-2xl w-full p-lg sm:p-xl shadow-2xl border border-outline-variant/40 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+      <div className="bg-surface-container-lowest rounded-3xl w-[90vw] md:w-[600px] lg:w-[750px] p-lg sm:p-xl shadow-2xl border border-outline-variant/40 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-start justify-between pb-md border-b border-outline-variant/30 mb-lg">
           <div className="flex items-center gap-3">
@@ -126,7 +140,7 @@ export const DetailAspirasiModal: React.FC = () => {
               </span>
               <p className="text-sm font-bold text-on-surface">{item.nama_siswa}</p>
               <p className="text-xs text-on-surface-variant">
-                NIS: <strong>{item.nis}</strong> • Kelas: <strong>{item.kelas}</strong>
+                ID/NIS: <strong>{item.nis}</strong> • Peran: <strong>{item.kelas}</strong>
               </p>
             </div>
 

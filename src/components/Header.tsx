@@ -6,7 +6,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onToggleMobile }) => {
-  const { user, aspirasiList, setActiveTab, setSelectedAspirasiDetail, switchToRole } = useApp();
+  const { user, aspirasiList, setActiveTab, setSelectedAspirasiDetail, logout } = useApp();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -169,24 +169,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobile }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    switchToRole(user.role === 'admin' ? 'siswa' : 'admin');
+                    logout();
                     setShowUserMenu(false);
                   }}
-                  className="w-full text-left px-3 py-2 text-xs text-on-surface hover:bg-surface-container rounded-lg flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 text-xs text-error hover:bg-error-container hover:text-on-error-container rounded-lg flex items-center gap-2"
                 >
-                  <span className="material-symbols-outlined text-[16px] text-primary">swap_horiz</span>
-                  <span>Ganti ke Mode {user.role === 'admin' ? 'Siswa' : 'Admin'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab('login');
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs text-on-surface hover:bg-surface-container rounded-lg flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-[16px] text-primary">admin_panel_settings</span>
-                  <span>Facility Admin Portal</span>
+                  <span className="material-symbols-outlined text-[16px]">logout</span>
+                  <span>Keluar Sesi</span>
                 </button>
               </div>
             )}
